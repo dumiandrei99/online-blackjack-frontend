@@ -1,21 +1,27 @@
 import React, {useState} from 'react'
-import io from 'socket.io-client'
-const socket = io.connect("http://localhost:3001")
+import { useNavigate } from 'react-router-dom'
+import socket from '../socket/socket'
 
 const WelcomePage = () => {
-    // url of the backend server
     const [username, setUsername] = useState('')
     const [error, setError] = useState('')
     const [showError, setShowError] = useState(false)
+    const navigate = useNavigate()
+
 
     const joinGame = () => {
         if (username !== '') {
+            // try to join the blackjack game
             socket.emit("join-game", username, (response) => {
+                // if the room is full, show an error message
                 if (response.message === "FULL ROOM") {
                     setError(response.message);
                     setShowError(true);
+                } else {
+                    // if there is available room in the room, navigate the user to the blackjack table
+                    console.log(response)
+                    navigate('/blackjack', { state: { username: username, alreadyConnectedUser: response.connectedUser, isReady: response.isReady} })
                 }
-                console.log(response.message)
             });
         } 
     }
@@ -28,7 +34,7 @@ const WelcomePage = () => {
            
             {showError 
             && 
-            <div> Room is already full!</div>
+            <div>{error}</div>
             }
         </div>
     )
