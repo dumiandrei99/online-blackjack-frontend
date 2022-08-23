@@ -32,12 +32,39 @@ div.dealer-card {
     margin-top: 2%;
 }
 
-div.player-card{
+div.dealer-card-turn {
+    width: 800px;
+    height: 300px;
+    background-color: rgba(1, 50, 32, 0.5);
+    border-style: solid;
+    border-color: red;
+    border-width: 2px;
+    border-radius: 10px;
+    float: left;
+    margin-left: 27.5%;
+    margin-top: 2%;
+}
+
+
+div.player-card {
     width: 800px;
     height: 300px;
     background-color: rgba(1, 50, 32, 0.5);
     border-style: solid;
     border-color: white;
+    border-width: 2px;
+    border-radius: 10px;
+    float: left;
+    margin-left: 5%;
+    margin-top: 5%;
+}
+
+div.player-card-turn {
+    width: 800px;
+    height: 300px;
+    background-color: rgba(1, 50, 32, 0.5);
+    border-style: solid;
+    border-color: red;
     border-width: 2px;
     border-radius: 10px;
     float: left;
@@ -108,3 +135,203 @@ div.intro {
     margin-top: 3%;
     font-size: 25px;
 }
+
+div.my-betting { 
+    width: 100%;
+    color:white;
+    text-align: center;
+    margin-top: 3%;
+    font-size: 25px;
+}
+
+div.bet-wrapper {
+    width: 100%;
+    margin-top: 5%;
+}
+
+div.minus-wrapper {
+    float: left;
+    width: 33%;
+    text-align: center;
+    color: white;
+}
+
+div.bet-amount {
+    float: left;
+    width: 33%;
+    text-align: center;
+    color: white;
+    font-size: 35px;
+}
+
+div.plus-wrapper {
+    float: left;
+    width: 33%;
+    text-align: center;
+    color: white;
+}
+
+button.place-bet { 
+    height: 5vh;
+    width: 70%;
+    margin-top: 5%;
+    margin-left: 15%;
+    color: white;
+    background-color: transparent;
+    border-style: solid;
+    border-color: white;
+    border-width: 2px;
+    border-radius: 10px;
+}
+
+button.bet-placed {
+    height: 5vh;
+    width: 70%;
+    margin-top: 5%;
+    margin-left: 15%;
+    color: rgba(1, 50, 32, 1);
+    background-color: rgba(255,255,255, 0.8);
+    border-style: solid;
+    border-color: white;
+    border-width: 2px;
+    border-radius: 10px;
+}
+
+button.place-bet:hover {
+    background-color: rgba(255,255,255, 0.8);
+    color: rgba(1, 50, 32, 1);
+}
+
+div.bet-placed { 
+    width: 100%;
+    color:white;
+    text-align: center;
+    margin-top: 5%;
+    font-size: 30px;
+}
+
+div.dealer-cards {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+div.score-hit-stand-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+div.score {
+    float: left;
+    color: white;
+    font-size: 30px;
+}
+
+button.stand-button-turn {
+    float: left;
+    width: 20vh;
+    margin-right: 10%;
+    background-color: #00A7E1;
+    color: white;
+    border-style: solid;
+    border-color: white;
+    border-width: 2px;
+    border-radius: 10px;
+}
+
+button.hit-button-turn {
+    float: left;
+    width: 20vh;
+    margin-left: 10%;
+    background-color: #FFA630;
+    color: white;
+    border-style: solid;
+    border-color: white;
+    border-width: 2px;
+    border-radius: 10px;
+}
+
+button.stand-button {
+    float: left;
+    width: 20vh;
+    margin-right: 10%;
+    background-color: grey;
+    color: white;
+    border-style: solid;
+    border-color: white;
+    border-width: 2px;
+    border-radius: 10px;
+}
+
+button.hit-button {
+    float: left;
+    width: 20vh;
+    margin-left: 10%;
+    background-color: grey;
+    color: white;
+    border-style: solid;
+    border-color: white;
+    border-width: 2px;
+    border-radius: 10px;
+}
+
+button.stand-button-turn:hover {
+    background-color: #22566b;
+}
+
+button.hit-button-turn:hover {
+    background-color: #704812;
+}
+
+div.bet-bust-balance {
+    width: 100%;
+    display: flex;
+    margin-left: 2%;
+}
+
+div.bet-playing-stage {
+    color: white;
+    height: 20vh;
+    font-size: 30px;
+    padding-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40%;
+    margin-right: 5%;
+}
+
+div.bust-blackjack-stand {
+    width: 30%;
+    display: flex;
+    align-items: center;
+    color: red;
+    justify-content: center;
+    font-size: 30px;
+    margin-right: 5%;
+} 
+
+div.credits-playing-stage {
+    color: white;
+    height: 20vh;
+    font-size: 30px;
+    padding-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40%;
+    margin-right: 5%;
+}
+
+div.bust-blackjack-stand-dealer {
+    width: 100%;
+    margin-top: 2%;
+    margin-right: 5%;
+    display: flex;
+    align-items: center;
+    color: red;
+    justify-content: center;
+    font-size: 30px;
+} 

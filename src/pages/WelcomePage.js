@@ -8,7 +8,6 @@ const WelcomePage = () => {
     const [showError, setShowError] = useState(false)
     const navigate = useNavigate()
 
-
     const joinGame = () => {
         if (username !== '') {
             // try to join the blackjack game
@@ -20,7 +19,7 @@ const WelcomePage = () => {
                 } else {
                     // if there is available room in the room, navigate the user to the blackjack table
                     console.log(response)
-                    navigate('/blackjack', { state: { username: username, alreadyConnectedUser: response.connectedUser, isReady: response.isReady} })
+                    navigate('/blackjack', { state: { username: username, alreadyConnectedUser: response.connectedUser, isReady: response.isReady}})
                 }
             });
         } 
@@ -31,7 +30,6 @@ const WelcomePage = () => {
             <h3>Enter your username</h3>
             <input type="text" placeholder="Username..." onChange={(e) => setUsername(e.target.value)}/>
             <button onClick={joinGame}>Enter</button>
-           
             {showError 
             && 
             <div>{error}</div>
