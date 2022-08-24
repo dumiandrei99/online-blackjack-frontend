@@ -5,9 +5,10 @@ import MyPlayerCard from '../components/MyPlayerCard';
 import OtherPlayerCard from '../components/OtherPlayerCard';
 import DealerCard from '../components/DealerCard';
 import '../styling/blackjackroom.css'
+import { useNavigate } from 'react-router-dom'
 
 const BlackjackRoom = () => {
-
+    const navigate = useNavigate()
     const { state } = useLocation()
     const { username, alreadyConnectedUser, isReady} = state
     const [otherUser, setOtherUser] = useState(alreadyConnectedUser)
@@ -18,12 +19,12 @@ const BlackjackRoom = () => {
     const [readyStage, setReadyStage] = useState(true)
     // second stage of the game - the users have to place their bets
     const [bettingStage, setBettingStage] = useState(false)
-    const [myPlayerTotalCredits, setMyPlayerTotalCredits] = useState(500)
+    const [myPlayerTotalCredits, setMyPlayerTotalCredits] = useState(490)
     const [myPlayerBet, setMyPlayerBet] = useState(0)
     const [myPlayerBetPlaced, setMyPlayerBetPlaced] = useState(false)
     const [otherPlayerBetPlaced, setOtherPlayerBetPlaced] = useState(false)
     const [otherPlayerBetAmount, setOtherPlayerBetAmount] = useState(0)
-    const [otherPlayerTotalCredits, setOtherPlayerTotalCredits] = useState(500)
+    const [otherPlayerTotalCredits, setOtherPlayerTotalCredits] = useState(490)
     const [betsPlaced, setBetsPlaced] = useState(false)
     // third stage of the game - the users are dealt cards and can take actions (hit or stay)
     const [playingStage, setPlayingStage] = useState(false)
@@ -41,38 +42,65 @@ const BlackjackRoom = () => {
     const [otherPlayerBustBlackjackStand, setOtherPlayerBustBlackjackStand] = useState('')
     const [dealerBustBlackjackStand, setDealerBustBlackjackStand] = useState('')
     const [showWinners, setShowWinners] = useState(false) 
-    const [myPlayerWinOrLose, setMyPlayerWinOrLose] = useState(false) // false = lose, true = win
-    const [otherPlayerWinOrLose, setOtherPlayerWinOrLose] = useState(false) // false = lose, true = win
+    const [myPlayerWinOrLose, setMyPlayerWinOrLose] = useState('')
+    const [otherPlayerWinOrLose, setOtherPlayerWinOrLose] = useState('')
+    const [userDisconnected, setUserDisconnected] = useState(false)
+    const [endGame, setEndGame] = useState(false)
+    const [winner, setWinner] = useState(null)
     
-    const resetLevel = () => {
-        console.log("A")
-        setShowWinners(false)
-        setBettingStage(true)
-        setMyPlayerBet(0)
-        setMyPlayerBetPlaced(false)
-        setOtherPlayerBetPlaced(false)
-        setOtherPlayerBetAmount(0)
-        setBetsPlaced(false)
-        setTurn(1)
-        setMyTurn(false)
-        setOtherPlayerTurn(false)
-        setDealerTurn(false)
-        setMyBustBlackjackStand('')
-        setOtherPlayerBustBlackjackStand('')
-        setDealerBustBlackjackStand('')
-        setMyPlayerWinOrLose(false)
-        setOtherPlayerWinOrLose(false)
-        setMyCards({})
-        setOtherPlayerCards([])
-        setDealerCards([])
-        setMyScore(0)
-        setOtherPlayerScore(0)
-        setDealerScore(0)
+    const resetLevel = async () => {
+        const reset = (myCredits, otherCredits) => {
+            setShowWinners(false)
+            if (myCredits === 0 || otherCredits >= 500) {
+                console.log("MY ZERO")
+                setBettingStage(false)
+                setWinner(otherUser)
+                setEndGame(true)
+                setTimeout(() => {
+                    navigate("/")
+                }, 5000)
+            } else if (otherCredits === 0 || myCredits >= 500) {
+                setBettingStage(false)
+                setWinner(username)
+                setEndGame(true)
+                setTimeout(() => {
+                    navigate("/")
+                }, 5000)
+            } else {
+                setBettingStage(true)
+            }
+            setMyPlayerBet(0)
+            setMyPlayerBetPlaced(false)
+            setOtherPlayerBetPlaced(false)
+            setOtherPlayerBetAmount(0)
+            setBetsPlaced(false)
+            setMyTurn(false)
+            setOtherPlayerTurn(false)
+            setDealerTurn(false)
+            setMyBustBlackjackStand('')
+            setOtherPlayerBustBlackjackStand('')
+            setDealerBustBlackjackStand('')
+            setMyPlayerWinOrLose('')
+            setOtherPlayerWinOrLose('')
+            setMyCards({})
+            setOtherPlayerCards([])
+            setDealerCards([])
+            setMyScore(0)
+            setOtherPlayerScore(0)
+            setDealerScore(0)
+        }
+
+        console.log("AA")
+        socket.emit("clean-db-tables")
+        socket.emit("total-credits", username, otherUser, (response) => {
+            setMyPlayerTotalCredits(response.myCredits)
+            setOtherPlayerTotalCredits(response.otherCredits)
+            reset(response.myCredits, response.otherCredits)
+        })
     }
 
     // controls the order in which the players act
     useEffect(() => {
-        console.log("B")
         socket.on("player_turn", (response) => {
             if (response.username === username) {
                 setMyTurn(true)
@@ -104,14 +132,124 @@ const BlackjackRoom = () => {
         })
     }, [turn, username])
 
+    // updates the new number of credits of the opponent
     useEffect(() => {
-        if (myBustBlackjackStand === "BUST" && otherPlayerBustBlackjackStand === "BUST") {
-            setPlayingStage(false)
-            setShowWinners(true)
+        socket.on("update-opponent-credits", (response) => {
+            setOtherPlayerTotalCredits(response.credits)
+        })
+    })
+
+    // decides the winners, losers and after that, restarts the round
+    useEffect(() => {
+        const myPlayerWins = () => {
+            setMyPlayerWinOrLose('win')
+            let credits = myPlayerTotalCredits + myPlayerBet * 2;
+            socket.emit("update_total_credits", username, credits) 
+        }
+    
+        const myPlayerLoses = () => {
+            setMyPlayerWinOrLose('lose')
+        }
+    
+        const otherPlayerWins = () => {
+            setOtherPlayerWinOrLose('win')
+        }
+        
+        const otherPlayerLoses = () => {
+            setOtherPlayerWinOrLose('lose')
+        }
+    
+        const myPlayerTies = () => {
+            setMyPlayerWinOrLose('tie')
+            let credits = myPlayerTotalCredits + myPlayerBet;
+            socket.emit("update_total_credits", username, credits)
+        }
+    
+        const otherPlayerTies = () => {
+            setOtherPlayerWinOrLose('tie')
+        }
+
+        const dealerBlackjack = () => {
+            setDealerBustBlackjackStand("BLACKJACK")
+            socket.emit("set-other-dealer-blackjack")
+
+            if (myBustBlackjackStand === "BLACKJACK") {
+                myPlayerTies()
+            } else {
+                myPlayerLoses()
+            }
+
+            if (otherPlayerBustBlackjackStand === "BLACKJACK") {
+                otherPlayerTies()
+            } else {
+                otherPlayerLoses()
+            }
+        }
+    
+        const dealerBust = () => {
+            setDealerBustBlackjackStand("BUST")
+            socket.emit("set-other-dealer-bust")
+
+            if (myBustBlackjackStand !== "BUST") {
+                myPlayerWins()
+            } else {
+                myPlayerLoses()
+            }
+
+            if (otherPlayerBustBlackjackStand !== "BUST") {
+                otherPlayerWins()
+            } else {
+                otherPlayerLoses()
+            }
+        }
+    
+        const dealerStand = () => {
+            setDealerBustBlackjackStand("STAND")
+            socket.emit("set-other-dealer-stand")
+
+            if (myBustBlackjackStand === "BUST") {
+                myPlayerLoses()
+            } else if (dealerScore < myScore) {
+                myPlayerWins()
+            } else if (dealerScore === myScore){
+                myPlayerTies()
+            } else {
+                myPlayerLoses()
+            }
+
+            if (otherPlayerBustBlackjackStand === "BUST") {
+                otherPlayerLoses()
+            } else if (dealerScore < otherPlayerScore) {
+                otherPlayerWins()
+            } else if (dealerScore === otherPlayerScore){
+                otherPlayerTies()
+            } else {
+                otherPlayerLoses()
+            }
+        }
+    
+        const rewardStage = () => {
+            setTimeout(() => {
+                setPlayingStage(false)
+                setShowWinners(true)
+            }, 3000)
             setTimeout(() => {
                 resetLevel()
-            }, 3000)
+            }, 10000)
         }
+        // in this situation, we don't want the dealer to draw any cards
+        if (myBustBlackjackStand === "BUST" && otherPlayerBustBlackjackStand === "BUST") {  
+            myPlayerLoses()
+            otherPlayerLoses()
+            rewardStage()
+        }
+        // in this situation, we don't want the dealer to draw any cards
+        if (myBustBlackjackStand === "BLACKJACK" && otherPlayerBustBlackjackStand === "BLACKJACK") {
+            myPlayerWins()
+            otherPlayerWins()
+            rewardStage()
+        }
+        // dealer draws cards and the winners are decided
 
         if (dealerTurn === true) {
             if (dealerScore < 17) {
@@ -123,19 +261,20 @@ const BlackjackRoom = () => {
                         setDealerCards(dealerPlayerCardsNewState)
                         setDealerScore(response.score)
                     })
-                }, 1000)
+                }, 500)
             } else if (dealerScore === 21) {
-                setDealerBustBlackjackStand("BLACKJACK")
-                socket.emit("set-other-dealer-blackjack")
+                dealerBlackjack()
+                rewardStage()
             } else if (dealerScore > 21) { 
-                setDealerBustBlackjackStand("BUST")
-                socket.emit("set-other-dealer-bust")
-            } else if (dealerScore > 17) {
-                setDealerBustBlackjackStand("STAND")
-                socket.emit("set-other-dealer-stand")
+                dealerBust()
+                rewardStage()
+            } else if (dealerScore >= 17) {
+                dealerStand()
+                rewardStage()
             }
         }
-    }, [dealerTurn, dealerScore, dealerCards, username, myBustBlackjackStand, myPlayerWinOrLose, otherPlayerBustBlackjackStand, otherPlayerWinOrLose])
+    }, [dealerCards, myBustBlackjackStand, myScore, otherPlayerBustBlackjackStand, otherPlayerScore,
+        otherUser, username, dealerScore, dealerTurn])
 
     useEffect(() => {
         socket.on("opponent_dealer_card", (response) => {
@@ -285,9 +424,17 @@ const BlackjackRoom = () => {
     // receive message if somebody disconnected out of the room
     useEffect(() => {
         socket.on("user_disconnected", (response) => {
-            console.log("the other user disconnected");
+            // if a user disconnects, we redirect the remaining user home
             setOtherUser("")
             setOtherPlayerReady(false)
+            setUserDisconnected(true)
+            setPlayingStage(false)
+            setBettingStage(false)
+            setReadyStage(false)
+            setShowWinners(false)
+            setTimeout(() => {
+                navigate("/")
+            }, 5000)
         })
     })
 
@@ -319,7 +466,7 @@ const BlackjackRoom = () => {
                 setIntro(false)
                 setReadyStage(false)
                 setBettingStage(true)
-            }, 1000)
+            }, 10000)
         }
     }, [myPlayerReady, otherPlayerReady, username])
 
@@ -333,7 +480,7 @@ const BlackjackRoom = () => {
                 setBetsPlaced(false)
                 setBettingStage(false)
 
-                socket.emit("generate-dealer-cards", "dealer", (response) => {
+                socket.emit("generate-dealer-cards", username, (response) => {
                     setDealerScore(response.score)
                     setDealerCards(response.dealerCards)
                 });
@@ -360,6 +507,7 @@ const BlackjackRoom = () => {
         socket.on("set_other_player_cards", (response) => {
             setOtherPlayerScore(response.score)
             setOtherPlayerCards(response.cards)
+            console.log(response.cards)
         })
     })
     
@@ -375,11 +523,14 @@ const BlackjackRoom = () => {
                 turn={dealerTurn && playingStage}
                 bustBlackjackStand={dealerBustBlackjackStand}
                 showWinners={showWinners}
-                myPlayerWin={myPlayerWinOrLose}
-                otherPlayerWin={otherPlayerWinOrLose}
+                myPlayerWinTieLose={myPlayerWinOrLose}
+                otherPlayerWinTieLose={otherPlayerWinOrLose}
                 myPlayerBet={myPlayerBet}
                 otherPlayerBet={otherPlayerBetAmount}
                 otherPlayerName={otherUser}
+                userDisconnected={userDisconnected}
+                endGame={endGame}
+                winner={winner}
             />
             <div className='player-cards-wrapper'>
 

@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
 import { useNavigate } from 'react-router-dom'
 import socket from '../socket/socket'
+import '../styling/blackjackroom.css'
 
 const WelcomePage = () => {
     const [username, setUsername] = useState('')
@@ -12,8 +13,8 @@ const WelcomePage = () => {
         if (username !== '') {
             // try to join the blackjack game
             socket.emit("join-game", username, (response) => {
-                // if the room is full, show an error message
-                if (response.message === "FULL ROOM") {
+                // if the room is full or the user has provided an existent username, show an error message
+                if (response.message !== "USER CONNECTED") {
                     setError(response.message);
                     setShowError(true);
                 } else {
@@ -26,14 +27,16 @@ const WelcomePage = () => {
     }
     
     return (
-        <div>
-            <h3>Enter your username</h3>
-            <input type="text" placeholder="Username..." onChange={(e) => setUsername(e.target.value)}/>
-            <button onClick={joinGame}>Enter</button>
-            {showError 
-            && 
-            <div>{error}</div>
-            }
+        <div className='background-welcome'>
+            <div>
+                <input className="welcome-input" type="text" placeholder="Enter your username..." onChange={(e) => setUsername(e.target.value)}/>
+                <button className="welcome-button" onClick={joinGame}>Enter</button>
+                {showError 
+                && 
+                <div className="welcome-error">{error}</div>
+                }
+            </div>
+            
         </div>
     )
 }

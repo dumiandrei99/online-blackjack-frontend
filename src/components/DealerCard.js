@@ -13,8 +13,9 @@ const DealerCard = (props) => {
             {props.intro && 
                 <div> 
                     <div className='intro'> This game will start in 10 seconds. </div>
-                    <div className='intro'> The first player to run out of chips will be considered the loser. </div>
-                    <div className='intro'> When the borders of your "right angle" turn red, it's your turn to act. </div> 
+                    <div className='intro'> There are two ways to win: you either get to 500 credits or your opponent to 0.</div>
+                    <div className='intro'> Betting is done by both players at the same time.</div>
+                    <div className='intro'> When the borders turn red, it's your turn to act. </div> 
                     <div className='intro'> Have fun! </div>
                 </div>
             }
@@ -58,23 +59,45 @@ const DealerCard = (props) => {
 
             {props.showWinners &&
             <div>
-                {props.myPlayerWin === true &&
+                {props.myPlayerWinTieLose === 'win' &&
                 <div className="intro">Congratulations! You've beaten the dealer and won {props.myPlayerBet * 2} credits! </div>
                 }
 
-                {props.myPlayerWin === false &&
+                {props.myPlayerWinTieLose === 'lose' &&
                 <div className="intro">Unfortunately, you lost this hand and the initial bet of {props.myPlayerBet} credits.</div>
                 }
-
-                {props.otherPlayerWin === true &&
-                <div className="intro">{props.otherPlayerName} has beaten the dealer and won {props.otherPlayerBet * 2} credits !</div>
+                
+                {props.myPlayerWinTieLose === 'tie' &&
+                <div className="intro">You have tied with the dealer and got back your initial bet of {props.myPlayerBet}!</div>
                 }
 
-                {props.myPlayerWin === false &&
-                <div className="intro">{props.otherPlayerName} lost to the dealer and his initial bet of {props.otherPlayerBet}</div>
+                {props.otherPlayerWinTieLose === 'win' &&
+                <div className="intro">{props.otherPlayerName} has beaten the dealer and won {props.otherPlayerBet * 2} credits!</div>
                 }
 
-                <div> The game wil restart in 3 seconds. Good luck! </div>
+                {props.otherPlayerWinTieLose === 'lose' &&
+                <div className="intro">{props.otherPlayerName} lost to the dealer and his initial bet of {props.otherPlayerBet}.</div>
+                }
+
+                {props.otherPlayerWinTieLose === 'tie' &&
+                <div className="intro">{props.otherPlayerName} has tied with the dealer and got back his initial bet of {props.otherPlayerBet}!</div>
+                }
+
+                <div className="intro"> The game will restart in 10 seconds. Good luck! </div>
+            </div>
+            }
+            
+            {props.userDisconnected &&
+            <div>
+                <div className="intro">The other user has disconnected.</div>
+                <div className="intro">You will be redirected to the home page in 5 seconds.</div>
+            </div>
+            }
+
+            {props.endGame &&
+            <div>
+                <div className="intro">{props.winner} has won this game! </div>
+                <div className='intro'>You will soon be redirected to the starting page!</div>
             </div>
             }
         </div>

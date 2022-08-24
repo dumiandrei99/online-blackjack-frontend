@@ -13,6 +13,57 @@ div.background {
     background-size: cover;
 }
 
+div.background-welcome {
+    width: 100%;
+    height: 100vh;
+    background-image: url('./media/blackjack_background.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    text-align: center;
+}
+
+/* welcome page */
+input.welcome-input {
+    width: 40%;
+    margin-top: 20%;
+    height: 5vh;
+    border-radius: 5px;
+    border-color: white;
+    background-color: rgba(1, 50, 32, 0.5);
+    font-size: 15px;
+    color: white;
+    outline: none;
+    text-align: center;
+}
+
+button.welcome-button {
+    width: 150px;
+    height: 5vh;
+    margin-left: 2%;
+    border-radius: 5px;
+    border-color: white;
+    background-color: white;
+    font-size: 15px;
+    color: rgba(1, 50, 32);
+    outline: none;
+}
+
+div.welcome-error {
+    margin-top: 2%;
+    margin-right: 10%;
+    color: white;
+}
+
+button.welcome-button:hover {
+    background-color: grey;
+    border-color: grey;
+}
+
+::placeholder {
+    color: white;
+    font-size: 15px;
+}
+
 /* board styling */
 div.player-cards-wrapper {
     width: 100%;
