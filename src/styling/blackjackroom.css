@@ -352,6 +352,7 @@ div.bet-playing-stage {
     justify-content: center;
     width: 40%;
     margin-right: 5%;
+    margin-top: 2%;
 }
 
 div.bust-blackjack-stand {
@@ -375,6 +376,7 @@ div.credits-playing-stage {
     justify-content: center;
     width: 40%;
     margin-right: 5%;
+    margin-top: 2%;
 }
 
 div.bust-blackjack-stand-dealer {
