@@ -72,7 +72,7 @@ div.player-cards-wrapper {
 
 div.dealer-card {
     width: 42vw;
-    height: 300px;
+    height: 350px;
     background-color: rgba(1, 50, 32, 0.5);
     border-style: solid;
     border-color: white;
@@ -85,7 +85,7 @@ div.dealer-card {
 
 div.dealer-card-turn {
     width: 42vw;
-    height: 300px;
+    height: 350px;
     background-color: rgba(1, 50, 32, 0.5);
     border-style: solid;
     border-color: red;
@@ -99,7 +99,7 @@ div.dealer-card-turn {
 
 div.player-card {
     width: 42vw;
-    height: 300px;
+    height: 350px;
     background-color: rgba(1, 50, 32, 0.5);
     border-style: solid;
     border-color: white;
@@ -112,7 +112,7 @@ div.player-card {
 
 div.player-card-turn {
     width: 42vw;
-    height: 300px;
+    height: 350px;
     background-color: rgba(1, 50, 32, 0.5);
     border-style: solid;
     border-color: red;
